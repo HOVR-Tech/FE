@@ -1,13 +1,17 @@
+@import url('https://fonts.cdnfonts.com/css/product-sans');
+
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
+  position: absolute;
+  width: 100%;
+  min-height: 50vh;
+  background-color: #f1f1f1 !important;
+  font-family: -apple-system, BlinkMacSystemFont, 'Product Sans', 'Product Sans thin', 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  overflow: 'hidden';
 }
 
 code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Product Sans', 'Courier New', sans-serif, monospace;
 }
