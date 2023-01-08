@@ -1,6 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Navbar, Button } from 'react-bootstrap';
+import { Navbar, Button, Dropdown } from 'react-bootstrap';
+import { API } from '../../config/api';
+import { UserContext } from '../../context/userContext';
+import { useQuery } from 'react-query';
+
 import LogoNav from '../image/icons/logoNav.png';
 import LogoNav2 from '../image/logoNav2.png';
 import JumbotronIcon2 from '../image/jumbotron2.png';
@@ -8,101 +12,130 @@ import JumbotronIcon2 from '../image/jumbotron2.png';
 import Login from '../auth/Login';
 import Register from '../auth/Register';
 
-import NavIn from './NavbarIn';
-import NavAdmin from './NavAdmin';
+import DropdownUser from '../dropdown/User';
+import DropdownAdmin from '../dropdown/Admin';
 
 export default function NavBar() {
   // MODAL
   const [modalLogin, setModalLogin] = useState(false);
   const [modalRegister, setModalRegister] = useState(false);
-  const navigate = useNavigate();
+  let navigate = useNavigate();
 
   // LOGIN USER CHECK
+  const [state, dispatch] = useContext(UserContext)
 
-  const userLogin = [];
-  const UserData = localStorage.getItem('users');
-  const DataUser = JSON.parse(UserData);
 
-  const isLogin = JSON.parse(localStorage.getItem('data_login'));
-
-  const LoginUser = (data) => {
-    DataUser.forEach((element) => {
-      if (data.email === element.email && data.password === element.password) {
-        userLogin.push(element);
-        localStorage.setItem('data_login', JSON.stringify(userLogin));
-        alert('ANJAY !!!');
-        setModalLogin(false);
-        navigate('/');
-      }
-    });
-  };
-
-  const remove = [...isLogin];
   const logout = () => {
-    remove.pop();
-    const userLogin = JSON.stringify(remove);
-    localStorage.setItem('data_login', userLogin);
+    console.log(state)
+    dispatch({
+        type: "LOGOUT"
+    })
+    navigate("/")
+}
 
-    navigate('/');
-  };
+  const {data: user} = useQuery("userCache", async() => {
+    const response = await API.get("users", {
+      headers: {
+        Authorization: `Bearer ${localStorage.token}`
+      }
+    })
+    return response.data.data
+  })
+
+
+  // const userLogin = [];
+  // const UserData = localStorage.getItem('token');
+  // const DataUser = JSON.parse(UserData);
+
+  // const isLogin = JSON.parse(localStorage.getItem('data_login'));
+  // const LoginUser = (data) => {
+  //   DataUser.forEach((element) => {
+  //     if (data.email === element.email && data.password === element.password) {
+  //       userLogin.push(element);
+  //       localStorage.setItem('', JSON.stringify(userLogin));
+  //       alert('ANJAY !!!');
+  //       setModalLogin(false);
+  //       navigate('/');
+  //     }
+  //   });
+  // };
+
+  // const remove = [...isLogin];
+  // const logout = () => {
+  //   remove.pop();
+  //   const userLogin = JSON.stringify(remove);
+  //   localStorage.setItem('data_login', userLogin);
+
+  //   navigate('/');
+  // };
 
   return (
     <>
       <Navbar
+        className='fixed-top'
         style={{
           width: '100%',
-          position: 'fixed',
-          top: '0px',
-          zIndex: 50,
           display: 'flex',
+          height: '13vh',
         }}
       >
-        <img
-          src={LogoNav2}
-          alt=""
-          style={{
-            position: 'absolute',
-            top: '0px',
-            height: '13vh',
-            width: '100%',
-          }}
-        />
-        <img
-          src={JumbotronIcon2}
-          alt=""
-          style={{
-            position: 'absolute',
-            top: '0px',
-            height: '13vh',
-            width: '100%',
-          }}
-        />
-        <div>
+        <div className='fixed-top d-flex justify-content-between w-75' style={{ margin:'auto' }}>
           <img
             src={LogoNav}
             alt=""
-            style={{ position: 'absolute', top: '5px', left: '7rem', cursor: 'pointer' }}
+            style={{ cursor: 'pointer' }}
             onClick={() => {
               navigate('/');
             }}
           />
-        </div>
 
-        {isLogin.length > 0 ? (
-          <>{remove[0].email === 'admin@gmail.com' ? <NavAdmin logout={logout} /> : <NavIn logout={logout} />}</>
-        ) : (
-          <div style={{ position: 'absolute', top: '20px', left: '58rem' }}>
-            <Button variant="outline-light" style={{ width: '8vw' }} onClick={() => setModalLogin(true)}>
+        {state.isLogin === false ? (
+          <div className='d-flex mt-3'>
+            <Button variant="outline-light" style={{ width: '8vw', height:'7vh',}} onClick={() => setModalLogin(true)}>
               Login
             </Button>
-            <Button variant="warning" style={{ color: 'white', width: '8vw', marginLeft: '1rem' }} onClick={() => setModalRegister(true)}>
+            <Button variant="warning" style={{ color: 'white', width: '8vw', height:'7vh', marginLeft: '1rem'}} onClick={() => setModalRegister(true)}>
               Register
             </Button>
-          </div>
-        )}
+            </div>
+          ) : (
+            <>
+              {state.user.role === 'admin' ? (
+                <DropdownAdmin logout={logout} />
+              ) : (
+                <div>
+                  <DropdownUser logout={logout} />
+                </div>
+              )}
+              
+            </>
+          )}
+        </div>
+        <img
+          className='position-relative'
+          src={LogoNav2}
+          alt=""
+          style={{
+            height: '13vh',
+            width: '100%',
+          }}
+        />
+         
+        <img
+          className='position-fixed'
+          src={JumbotronIcon2}
+          alt=""
+          style={{
+            height: '13vh', 
+            width: '98%',
+
+          }}
+        />
+       
+        
       </Navbar>
 
-      <Login modalLogin={modalLogin} setModalLogin={setModalLogin} switchRegister={setModalRegister} LoginUser={LoginUser} />
+      <Login modalLogin={modalLogin} setModalLogin={setModalLogin} switchRegister={setModalRegister} />
       <Register modalRegister={modalRegister} setModalRegister={setModalRegister} switchLogin={setModalLogin} />
     </>
   );

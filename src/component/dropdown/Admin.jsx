@@ -1,53 +1,73 @@
-import React from 'react';
+import React, {useContext } from 'react';
+import agent1 from '../image/icons/agent1.png';
+import { useNavigate } from 'react-router-dom';
+import { Dropdown } from 'react-bootstrap';
 
-import Segitiga from '../image/icons/segitiga.png';
-import Trip1 from '../image/icons/journey1.png';
+import Journey1 from '../image/icons/journey1.png';
 import Bill1 from '../image/icons/bill1.png';
 import Logout1 from '../image/icons/logout1.png';
 
-export default function AdminDrop() {
+
+import { UserContext } from '../../context/userContext';
+
+
+export default function DropdownAdmin() {
+ const navigate = useNavigate();
+
+  const [state, dispatch] = useContext(UserContext)
+
+  const logout = () => {
+    console.log(state)
+    dispatch({
+        type: "LOGOUT"
+    })
+    navigate("/")
+}
+  
   return (
     <>
-      <section
-        style={{
-          backgroundColor: 'white',
-          marginLeft: '30rem',
-          marginTop: '2rem',
-          width: ' 14vw',
-          height: '27vh',
-          border: 'solid',
-          borderRadius: '10px',
-          borderWeight: '1px',
-          borderColor: 'transparent',
-          boxShadow: '2px 4px 12px 0px',
-        }}
-      >
-        <div className="float-end" style={{ marginTop: '-25px' }}>
-          <img src={Segitiga} alt="" />
-        </div>
-        <div
-          style={{
-            marginTop: '1rem',
-            minHeight: '10vh',
-            marginLeft: '2rem',
-          }}
-        >
-          <div className="d-flex mb-2">
-            <img src={Trip1} alt="" />
-            <h5 className="ms-1">Trip</h5>
-          </div>
-          <div className="d-flex mb-2">
-            <img src={Bill1} alt="" />
-            <h5 className="ms-1">Transaction</h5>
-          </div>
+          <Dropdown >
+            <Dropdown.Toggle className='mt-2 me-5' variant="none" id="none">
+              <img
+                src={agent1}
+                variant="none"
+                style={{
+                  width: '50px',
+                }}
+              />
+            </Dropdown.Toggle>
 
-          <div style={{ borderBottom: 'solid', borderColor: '#A8A8A8', marginLeft: '-2rem', marginBottom: '1rem' }} />
-          <div className="d-flex">
-            <img src={Logout1} alt="" />
-            <h5 className="ms-1">Logout</h5>
-          </div>
-        </div>
-      </section>
+            <Dropdown.Menu>
+              <Dropdown.Item
+                onClick={() => {
+                  navigate('/incomeTrip');
+                }}
+              >
+                <div className="d-flex mb-2">
+                  <img src={Journey1} alt="" />
+                  <h5 className="ms-1">Trip</h5>
+                </div>
+              </Dropdown.Item>
+              <Dropdown.Item
+                onClick={() => {
+                  navigate('/listTransaction');
+                }}
+              >
+                <div className="d-flex mb-2">
+                  <img src={Bill1} alt="" />
+                  <h5 className="ms-1">Transaction</h5>
+                </div>
+              </Dropdown.Item>
+              <Dropdown.Item onClick={logout}>
+                <div style={{ borderBottom: 'solid', borderColor: '#A8A8A8', marginBottom: '1rem' }} />
+                <div className="d-flex">
+                  <img src={Logout1} alt="" />
+                  <h5 className="ms-1">Logout</h5>
+                </div>
+              </Dropdown.Item>
+            </Dropdown.Menu>
+          </Dropdown>
+          <div style={{ position: 'absolute', top: '1rem', left: '65rem', cursor: 'pointer' }}></div>
     </>
   );
 }

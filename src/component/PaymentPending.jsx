@@ -4,11 +4,34 @@ import { Container, Button, Dropdown } from 'react-bootstrap';
 import Logo from './image/icons/logoDw.png';
 import CardTour from '../dummy/CardTour';
 import Payment1 from './image/payment.png';
+import { useQuery } from 'react-query';
+import { API } from '../config/api';
+import { useContext } from 'react';
+import { UserContext } from '../context/userContext';
 
 export default function PaymentPending() {
-  const { index } = useParams();
+ 
+
+  const [state] = useContext(UserContext)
+
+  let {data: transaction} = useQuery("transCache", async () => {
+    const response = await API.get("/transactions");
+    
+    return response.data.data
+    
+  })
+
+  let transactionFilter = transaction?.filter((props) => {
+    if ((props)?.user_id === state?.user.id) {
+      return props
+    }
+    return null;
+  })
+
 
   return (
+    <>
+    {transactionFilter?.map((items)=> {
     <>
       <section>
         <Container
@@ -34,8 +57,8 @@ export default function PaymentPending() {
 
           <div className="d-flex justify-content-between" style={{ marginLeft: '2rem' }}>
             <div>
-              <h4>{CardTour[index].title}</h4>
-              <p>{CardTour[index].country}</p>
+              <h4>{items?.trip.title}</h4>
+              <p>{items?.trip.country.name}</p>
               <p
                 style={{
                   fontFamily: 'Avenir',
@@ -97,13 +120,15 @@ export default function PaymentPending() {
             <div className="float-end" style={{ marginTop: '-40px' }}>
               <h5>Qty : 1</h5>
               <p className="fw-bold" style={{ color: 'red' }}>
-                Total : IDR. {CardTour[index].budget.toLocaleString()}
+                Total : IDR. {items?.trip.price.toLocaleString()}
               </p>
             </div>
           </section>
           <div style={{ borderTop: 'solid', borderWeight: '1px', marginTop: '2rem', marginBottom: '2rem' }} />
         </Container>
       </section>
+      </>
+      })}
     </>
   );
 }

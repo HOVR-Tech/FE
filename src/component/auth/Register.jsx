@@ -1,67 +1,147 @@
-import React, { useState, useEffect } from 'react';
-import { Modal, Form, Button } from 'react-bootstrap';
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect, useContext } from 'react';
+import { Modal, Form, Button, Alert } from 'react-bootstrap';
+import { Link, Navigate, useNavigate } from 'react-router-dom';
+import { useMutation } from 'react-query';
+import { API, setAuthToken } from '../../config/api';
+
+import { UserContext }  from '../../context/userContext';
+
 
 export default function Register({ modalRegister, setModalRegister, switchLogin }) {
-  const data = [];
-  const DataUser = localStorage.getItem('users');
-  const UserData = JSON.parse(DataUser);
+  const [message, setMessage] = useState(null)
+  let navigate = useNavigate()
+  // const data = [];
+  // const UserToken = localStorage.getItem('token');
+  // const UserData = JSON.parse(UserToken);
 
-  const [user, setUser] = useState({
+  
+
+  // const [state, dispatch] = useContext(UserContext);
+  
+  
+  const [form, setForm] = useState({
     name: '',
     email: '',
     password: '',
     number: '',
+   
   });
 
   const onChange = (e) => {
-    setUser({
-      ...user,
+    setForm({
+      ...form,
       [e.target.name]: e.target.value,
     });
   };
 
-  const onSubmit = (e) => {
-    e.preventDefault();
 
-    console.log('register', user);
-    if (UserData == null) {
-      data.push(user);
-      localStorage.setItem('users', JSON.stringify(data));
-    } else {
-      UserData.forEach((element) => {
-        data.push(element);
-      });
+  const handleSubmit = useMutation(async (e) => {
+    try {
+      e.preventDefault();
 
-      data.push(user);
-      localStorage.setItem('users', JSON.stringify(data));
+      
+
+      const config = {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      };
+
+      const body = JSON.stringify(form)
+      const response = await API.post('/register', body, config);
+      
+      // if (UserData == null) {
+      //       data.push(setToken);
+      //       localStorage.setItem('token', JSON.stringify(data));
+      //     } else {
+      //       UserData.forEach((element) => {
+      //         data.push(element);
+      //       });
+      
+      //       data.push(setToken);
+      //       localStorage.setItem('token', JSON.stringify(data));
+      //     }
+      // Notif
+      if (response.data.status === 'success...') {
+        const alert = (
+          <Alert variant="success" className='py-1'>
+          Success
+        </Alert>  
+        )
+        setMessage(alert)
+       
+        setForm({
+          name: '',
+          email: '',
+          password: '',
+          number: '',
+          
+        })
+      } else {
+        const alert = (
+          <Alert variant="danger" className='py-1'>
+          Failed
+        </Alert>
+        )
+        setMessage(alert)
+      }
+    } catch (error) {
+      const alert = (
+        <Alert variant="danger" className='py-1'>
+          Failed
+        </Alert>
+      );
+      setMessage(alert)
+      console.log(error)
     }
-    console.log(user);
-  };
+    console.log(form)
+  })
+  
+  
+  // const onSubmit = (e) => {
+  //   e.preventDefault();
 
-  useEffect(() => {}, []);
+  //   console.log('register', user);
+  //   if (UserData == null) {
+  //     data.push(user);
+  //     localStorage.setItem('users', JSON.stringify(data));
+  //   } else {
+  //     UserData.forEach((element) => {
+  //       data.push(element);
+  //     });
+
+  //     data.push(user);
+  //     localStorage.setItem('users', JSON.stringify(data));
+  //   }
+  //   console.log(user);
+  // };
+  // useEffect(() => {
+  //   localStorage.setItem('authToken', state)
+  // }, []);
 
   return (
     <Modal size="lg" show={modalRegister} onHide={() => setModalRegister(false)}>
       <Modal.Header className="d-flex justify-content-center">
         <h4 className="fw-bold active">Register</h4>
       </Modal.Header>
-      <Form className="p-4" onSubmit={onSubmit}>
+
+
+      <Form className="p-4" onSubmit={(e) => handleSubmit.mutate(e)}>
         <Form.Group className="mb-3" controlId="formBasicText">
           <Form.Label>Full Name</Form.Label>
-          <Form.Control name="name" type="text" onChange={onChange} value={user.name} />
+          <Form.Control name="name" type="text" onChange={onChange} value={form.name} />
         </Form.Group>
         <Form.Group className="mb-3" controlId="formBasicEmail">
           <Form.Label>Email</Form.Label>
-          <Form.Control name="email" type="email" onChange={onChange} value={user.email} />
+          <Form.Control name="email" type="email" onChange={onChange} value={form.email} />
         </Form.Group>
-        <Form.Group className="mb-3" controlId="formBasicPassword">
+        <Form.Group className="mb-3" co ntrolId="formBasicPassword">
           <Form.Label>Password</Form.Label>
-          <Form.Control name="password" type="password" onChange={onChange} value={user.password} />
+          <Form.Control name="password" type="password" onChange={onChange} value={form.password} />
         </Form.Group>
         <Form.Group className="mb-3" controlId="formBasicNumber">
           <Form.Label>Phone Number</Form.Label>
-          <Form.Control name="number" type="number" onChange={onChange} value={user.number} />
+          <Form.Control name="number" type="text" onChange={onChange} value={form.number} />
         </Form.Group>
         <Button
           className="w-100 text-white fw-bold"

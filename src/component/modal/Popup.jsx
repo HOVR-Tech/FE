@@ -1,6 +1,6 @@
 import React from 'react';
 import Modal from 'react-bootstrap/Modal';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams, Link } from 'react-router-dom';
 
 function ModalPopUp({ show, onHide }) {
   const navigate = useNavigate();
@@ -10,10 +10,13 @@ function ModalPopUp({ show, onHide }) {
       <Modal.Body>
         <h4 className="text-center m-0 p-5">
           Your payment will be confirmed within 1 x 24 hours To see orders click{' '}
-          <a href onClick={() => navigate(`/paymentPending/${index}`)} style={{ textDecoration: 'none', cursor: 'pointer' }} className="text-success fs-5">
+         <Link to={'/paymentPending'} style={{ textDecoration: 'none', cursor: 'pointer' }} >
+         <p className="text-success fs-5">
             Here
-          </a>{' '}
+          </p>{' '}
+          </Link>
           thank you
+
         </h4>
       </Modal.Body>
     </Modal>

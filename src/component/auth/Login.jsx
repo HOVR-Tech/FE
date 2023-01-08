@@ -1,47 +1,110 @@
-import React, { useState } from 'react';
-import { Modal, Form, Button } from 'react-bootstrap';
-import { Link } from 'react-router-dom';
-import NavIn from '../navbar/NavbarIn';
+import React, { useState, useContext } from "react";
+import { Modal, Form, Button, Alert } from "react-bootstrap";
+import { Link, Navigate, useNavigate } from "react-router-dom";
 
-export default function Login({ modalLogin, setModalLogin, switchRegister, LoginUser }) {
-  const [userLogin, setUserLogin] = useState({
-    email: '',
-    password: '',
+import { API } from "../../config/api";
+import { useMutation } from "react-query";
+import { UserContext } from "../../context/userContext";
+
+export default function Login({ modalLogin, setModalLogin, switchRegister }) {
+  let navigate = useNavigate();
+  const [message, setMessage] = useState(null);
+  const [state, dispatch] = useContext(UserContext);
+  console.log(state);
+  const [form, setform] = useState({
+    email: "",
+    password: "",
   });
 
   const onChange = (e) => {
-    setUserLogin({
-      ...userLogin,
+    setform({
+      ...form,
       [e.target.name]: e.target.value,
     });
   };
 
-  const onSubmit = (e) => {
-    e.preventDefault();
+  const onSubmit = useMutation(async (e) => {
+    try {
+      e.preventDefault();
 
-    LoginUser(userLogin);
-  };
+      const config = {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      };
+
+      const body = JSON.stringify(form);
+
+      const response = await API.post("/login", body, config);
+      console.log(response);
+      if (response?.status === 200) {
+        dispatch({
+          type: "LOGIN_SUCCESS",
+          payload: response.data.data,
+        });
+
+        if (state.user.role === "admin") {
+          navigate(0);
+          setModalLogin(false);
+        } else {
+          navigate(0);
+          setModalLogin(false);
+        }
+
+        const alert = (
+          <Alert variant="success" className="py-1">
+            Login Success
+          </Alert>
+        );
+        setMessage(alert);
+      }
+    } catch (error) {
+      const alert = (
+        <Alert variant="danger" className="py-1">
+          Login Failed
+        </Alert>
+      );
+      setMessage(alert);
+      console.log(error);
+    }
+  });
+
   return (
     <>
       <Modal size="sm" show={modalLogin} onHide={() => setModalLogin(false)}>
         <Modal.Header className="d-flex justify-content-center">
           <h4 className="fw-bold">Login</h4>
         </Modal.Header>
-        <Form onSubmit={onSubmit} className="p-4">
+        {message && message}
+        <Form onSubmit={(e) => onSubmit.mutate(e)} className="p-4">
           <Form.Group className="mb-3" controlId="formBasicEmail">
             <Form.Label>Email Address</Form.Label>
-            <Form.Control name="email" type="email" onChange={onChange} value={userLogin.email} />
+            <Form.Control
+              name="email"
+              type="email"
+              onChange={onChange}
+              value={form.email}
+            />
           </Form.Group>
 
           <Form.Group className="mb-3" controlId="formBasicPassword">
             <Form.Label>Password</Form.Label>
-            <Form.Control name="password" type="password" onChange={onChange} value={userLogin.password} />
+            <Form.Control
+              name="password"
+              type="password"
+              onChange={onChange}
+              value={form.password}
+            />
           </Form.Group>
-          <Button className="w-100 text-white fw-bold" variant="warning" type="submit">
+          <Button
+            className="w-100 text-white fw-bold"
+            variant="warning"
+            type="submit"
+          >
             Submit
           </Button>
           <Form.Text className="text-muted">
-            Don't Have Account?{' '}
+            Don't Have Account?{" "}
             <Link
               onClick={() => {
                 setModalLogin(false);

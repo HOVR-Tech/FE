@@ -1,9 +1,15 @@
 import React from 'react';
+import Daun from './image/daun3.png'
 
 export default function Footer() {
   return (
-    <div className="footer" style={{ textAlign: 'center', width: '1349px', height: '9vh', marginLeft: '0px', position: 'absolute', bottom: '-207px', backgroundColor: '#FFAF00' }}>
-      <h5 style={{ marginTop: '15px', color: 'white', fontWeight: 80 }}>Copyright @ 2020 Dewe Tour - Hydrilla Fragrant - NIS. All Rights reserved</h5>
+    <>
+    {/* <span className='float-end'>
+      <img src={Daun} alt="" style={{width:'119px'}}/>
+    </span> */}
+    <div className="bottom-100" style={{ width: '100%', height: '9vh', marginTop:'12rem', backgroundColor: '#FFAF00' }}>
+      <h5 className='text-center' style={{ color: 'white', fontWeight: 80 }}>Copyright @ 2020 Dewe Tour - Hydrilla Fragrant - NIS. All Rights reserved</h5>
     </div>
+    </>
   );
 }
