@@ -95,19 +95,18 @@ export default function Payment() {
       e.preventDefault();
 
       // CONFIGURATION
-      const config = {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      };
+      // const config = {
+      //   headers: {
+      //     "Content-Type": "multipart/form-data",
+      //   },
+      // };
 
-      const body = JSON.stringify(form);
+      const formData = new FormData()
+      formData.append("image", form.image[0])
       const response = await API.patch(
-        "/transaction-upload/" + transactions.id,
-        body,
-        config
+        "/transaction-upload/" + transactions.id
       );
-      console.log(response.data.data);
+      console.log(response.data);
       if (response.data.code === 200) {
         console.log("UPLOAD SUKSES");
       }
