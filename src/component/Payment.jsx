@@ -439,6 +439,7 @@ export default function Payment() {
                             height: "20vh",
                           }}
                         >
+                          <img src={items?.attachment} alt="" />
                           <p
                             style={{
                               fontSize: "13px",
@@ -448,7 +449,6 @@ export default function Payment() {
                           >
                             Your Proof
                           </p>
-                          <img src={items?.attachment} alt="" />
                         </div>
 
                         <label
