@@ -104,7 +104,7 @@ export default function Payment() {
       const formData = new FormData()
       formData.append("image", form.image[0])
       const response = await API.patch(
-        "/transaction-upload/" + transactions.id
+        "/transaction-upload/" + transactions
       );
       console.log(response.data);
       if (response.data.code === 200) {
