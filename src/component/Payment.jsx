@@ -448,7 +448,7 @@ export default function Payment() {
                           >
                             Your Proof
                           </p>
-                          <img src={items?.Image} alt="" />
+                          <img src={items?.attachment} alt="" />
                         </div>
 
                         <label
