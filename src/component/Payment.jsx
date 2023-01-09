@@ -430,7 +430,7 @@ export default function Payment() {
                         </div>
                       </div>
                     </div>
-                    <Form onSubmit={(e) => handleUpload.mutate(e)}>
+                   
                       <div style={{ marginRight: "4rem" }}>
                         <div
                           style={{
@@ -467,8 +467,9 @@ export default function Payment() {
                           style={{ visibility: "hidden", width: "5px" }}
                           onChange={handleChange}
                         />
+                        <Button onClick={(e) => handleUpload.mutate(e)}/>
                       </div>
-                    </Form>
+                   
                   </div>
                   <section
                     style={{
