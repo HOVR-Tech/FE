@@ -206,17 +206,7 @@ export default function Payment() {
                         </div>
                       </div>
                     </div>
-                    <div style={{ marginRight: "4rem" }}>
-                      <img src={Payment1} alt="" />
-                      <p
-                        style={{
-                          fontWeight: "bold",
-                          fontSize: "14px",
-                        }}
-                      >
-                        Click Photo to Change
-                      </p>
-                    </div>
+                    
                   </div>
                   <section
                     style={{
